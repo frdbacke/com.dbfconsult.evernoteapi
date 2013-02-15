@@ -1,6 +1,11 @@
 package com.dbfconsult.evernote.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
@@ -14,8 +19,21 @@ import com.evernote.thrift.transport.THttpClient;
 import com.evernote.thrift.transport.TTransportException;
 
 public class EvernoteServiceImpl implements EvernoteService {
-	private static final String developerToken = "S=s1:U=5d375:E=14436f07a64:C=13cdf3f4e64:P=1cd:A=en-devtoken:H=435eefeaf0b12914a7d898fa9f6b1661";
+	private String developerToken;
 	private static final String userStoreUrl = "https://sandbox.evernote.com/edam/user";
+
+	public EvernoteServiceImpl() {
+		Properties properties = new Properties();
+		try {
+			properties
+					.load(new FileInputStream(new File("./src/main/resources/evernote.properties")));
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		developerToken = properties.getProperty("developerToken");
+	}
 
 	public List<Notebook> getNotebooks() {
 
